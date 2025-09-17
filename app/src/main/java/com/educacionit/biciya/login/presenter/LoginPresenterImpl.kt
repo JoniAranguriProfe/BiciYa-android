@@ -1,14 +1,17 @@
 package com.educacionit.biciya.login.presenter
 
 import com.educacionit.biciya.login.contracts.LoginContract
+import com.educacionit.biciya.login.model.LoginException
+import com.educacionit.biciya.login.presenter.domain.UsuarioApp
+import com.educacionit.biciya.login.presenter.domain.convertirAUsuarioApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginPresenterImpl(
-    val loginView: LoginContract.View,
-    val loginModel: LoginContract.Model,
-    val presenterScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val loginView: LoginContract.View,
+    private val loginModel: LoginContract.Model,
+    private val presenterScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) :
     LoginContract.Presenter {
 
@@ -26,16 +29,24 @@ class LoginPresenterImpl(
                 return@launch
             }
 
-            val loginResult = loginModel.performLogin(email, password)
-            loginView.setLoadingVisibility(false)
-            if (!loginResult) {
+            try {
+                val userServer = loginModel.performLogin(email, password)
+                val usuarioApp = userServer.convertirAUsuarioApp()
+                saveUserInStorage(usuarioApp)
+                loginView.showSuccessMessage("Bienvenido ${usuarioApp.nombre}")
+                loginView.goToHomeScreen()
+            } catch (e: LoginException) {
                 loginView.showErrorMessage("Error en el login!")
                 return@launch
+            } finally {
+                loginView.setLoadingVisibility(false)
             }
 
-            loginView.showSuccessMessage("Logueado exitosamente!")
-            loginView.goToHomeScreen()
         }
+    }
+
+    private fun saveUserInStorage(usuarioApp: UsuarioApp) {
+        // Guardar en db local
     }
 
     override fun validateEmail(email: String): Boolean {
