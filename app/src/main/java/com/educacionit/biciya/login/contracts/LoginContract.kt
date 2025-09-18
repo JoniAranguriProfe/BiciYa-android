@@ -3,7 +3,6 @@ package com.educacionit.biciya.login.contracts
 import com.educacionit.biciya.login.model.entities.UsuarioServer
 
 interface LoginContract {
-
     interface View{
         fun showErrorMessage(message:String)
         fun showSuccessMessage(message:String)
@@ -17,7 +16,6 @@ interface LoginContract {
         fun validateEmail(email:String): Boolean
         fun validatePassword(password:String):Boolean
     }
-
     interface Model{
         suspend fun performLogin(email:String, password:String): UsuarioServer
     }
