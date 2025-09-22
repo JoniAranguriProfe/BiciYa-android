@@ -6,12 +6,15 @@ import com.educacionit.biciya.login.presenter.domain.UsuarioApp
 import com.educacionit.biciya.login.presenter.domain.convertirAUsuarioApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 class LoginPresenterImpl(
     private val loginView: LoginContract.View,
     private val loginModel: LoginContract.Model,
-    private val presenterScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val presenterScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) :
     LoginContract.Presenter {
 
