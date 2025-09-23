@@ -1,7 +1,7 @@
 package com.educacionit.biciya.home.view
 
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.educacionit.biciya.R
 import com.educacionit.biciya.home.view.fragments.MapFragment
 import com.educacionit.biciya.home.view.fragments.RequestsFragment
+import com.educacionit.biciya.utils.Constants
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : AppCompatActivity() {
@@ -31,17 +32,18 @@ class HomeActivity : AppCompatActivity() {
         setUpViews()
 
         initFragments()
+
+        setFragmentOrMapViewAsDefault(savedInstanceState?.getInt(Constants.STATE_INSTANCE, R.id.map_item) ?: R.id.map_item)
     }
 
     private fun initFragments() {
         mapFragment = MapFragment()
         requestsFragment = RequestsFragment()
-        setMapViewAsDefault()
     }
 
     // TODO: Corregir comportamiento al girar la pantalla!
-    private fun setMapViewAsDefault() {
-        bottomNavigation.selectedItemId = R.id.map_item
+    private fun setFragmentOrMapViewAsDefault(itemSelected: Int) {
+        bottomNavigation.selectedItemId = itemSelected
     }
 
     private fun setUpViews() {
@@ -72,5 +74,11 @@ class HomeActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.home_container, fragmentToLoad)
         transaction.commit()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(Constants.STATE_INSTANCE, bottomNavigation.selectedItemId)
+        Log.i("onSaveInstanceState", "Instancia almacenada")
     }
 }
