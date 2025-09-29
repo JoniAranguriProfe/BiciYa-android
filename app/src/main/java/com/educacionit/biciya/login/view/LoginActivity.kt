@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        goToHomeScreen()
         initPresenter()
         initViews()
     }
