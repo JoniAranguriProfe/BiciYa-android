@@ -22,6 +22,9 @@ import com.educacionit.biciya.R
 import com.educacionit.biciya.home.view.fragments.MapFragment
 import com.educacionit.biciya.home.view.fragments.RequestsFragment
 import com.educacionit.biciya.utils.Constants
+import com.educacionit.biciya.utils.LocationUtils
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -30,6 +33,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var mapFragment: MapFragment
     private lateinit var requestsFragment: RequestsFragment
+    private val locationUtils = LocationUtils()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +45,6 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         setUpViews()
 
         initFragments()
@@ -126,12 +130,15 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun startGettingUserLocation() {
-        // Get user location
         Toast.makeText(
             this,
             "Gracias por aceptar el permiso!",
             Toast.LENGTH_SHORT
         ).show()
+
+        LocationUtils().getLocationUpdates(this) { location ->
+            println(location.toString())
+        }
     }
 
     private fun explainWhyWeNeedAccessToLocation() {
