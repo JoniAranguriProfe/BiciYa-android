@@ -90,7 +90,6 @@ class HomeActivity : AppCompatActivity() {
         requestsFragment = RequestsFragment()
     }
 
-    // TODO: Corregir comportamiento al girar la pantalla!
     private fun setFragmentOrMapViewAsDefault(itemSelected: Int) {
         bottomNavigation.selectedItemId = itemSelected
     }
@@ -132,28 +131,33 @@ class HomeActivity : AppCompatActivity() {
     private fun startGettingUserLocation() {
         Toast.makeText(
             this,
-            "Gracias por aceptar el permiso!",
+            getString(R.string.thanks_for_accepting_permission),
             Toast.LENGTH_SHORT
         ).show()
 
-        LocationUtils().getLocationUpdates(this) { location ->
-            println(location.toString())
+        locationUtils.createLocationSettingsTask(
+            this,
+            Constants.REQUEST_CHECK_SETTINGS
+        ) { location ->
+            runOnUiThread {
+                mapFragment.updateUserLocation(location.latitude, location.longitude)
+            }
         }
     }
 
     private fun explainWhyWeNeedAccessToLocation() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
             val dialog: AlertDialog.Builder = AlertDialog.Builder(this)
-            dialog.setTitle("Necesitamos acceder a tu ubicacion!")
-            dialog.setMessage("Parece que no aceptaste el acceso a ubicacion, quisieras modificar eso en la configuracion de la app?")
-            dialog.setPositiveButton("Dale") { _, _ ->
+            dialog.setTitle(getString(R.string.request_location_permission_title))
+            dialog.setMessage(getString(R.string.request_location_permission_message))
+            dialog.setPositiveButton(getString(R.string.go)) { _, _ ->
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri = Uri.fromParts("package", packageName, null)
                 intent.setData(uri)
                 startActivity(intent)
             }
             dialog.setNegativeButton(
-                "Cancel"
+                getString(R.string.cancel)
             ) { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
@@ -186,6 +190,20 @@ class HomeActivity : AppCompatActivity() {
                 false
             )
         } ?: false
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == Constants.REQUEST_CHECK_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                //Se activo la ubicación
+                startGettingUserLocation()
+            } else {
+                //NO se activo la ubicación
+                Toast.makeText(this, getString(R.string.request_location), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     companion object {
