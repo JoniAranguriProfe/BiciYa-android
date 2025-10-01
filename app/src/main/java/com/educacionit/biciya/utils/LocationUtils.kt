@@ -1,8 +1,11 @@
 package com.educacionit.biciya.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.IntentSender
 import android.os.Looper
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -16,6 +19,7 @@ import com.google.android.gms.tasks.Task
 
 class LocationUtils {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
 
     @SuppressLint("NewApi")
     fun createLocationRequest(): LocationRequest {
@@ -25,33 +29,44 @@ class LocationUtils {
     }
 
     @SuppressLint("MissingPermission")
-    fun createLocationSettingsTask(context: Context, onUpdate: (LatLng) -> Unit) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    fun createLocationSettingsTask( //Si tiene la ubicación apagada, muestro Dialog para que la prenda, si esta activada la ubicación la obtengo del dispo
+        activity: Activity,
+        requestCode: Int,
+        onUpdate: (LatLng) -> Unit
+    ) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
         val locationRequest = createLocationRequest()
-        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-        val client: SettingsClient = LocationServices.getSettingsClient(context)
-        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true)
+
+        val client: SettingsClient = LocationServices.getSettingsClient(activity)
+        val task = client.checkLocationSettings(builder.build())
+
         task.addOnSuccessListener {
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.lastLocation?.let {
+                        onUpdate(LatLng(it.latitude, it.longitude))
+                    }
+                }
+            }
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,
-                object : LocationCallback() {
-                    override fun onLocationResult(locationResult: LocationResult) {
-                        locationResult.lastLocation?.let {
-                            onUpdate(LatLng(it.latitude, it.longitude))
-                        }
-                    }
-                },
+                locationCallback,
                 Looper.getMainLooper()
             )
         }
-        task.addOnFailureListener {
-            println("Location failed")
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    exception.startResolutionForResult(activity, requestCode)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    sendEx.printStackTrace()
+                }
+            }
         }
     }
-
-    fun getLocationUpdates(context: Context, onUpdate: (LatLng) -> Unit) {
-        createLocationSettingsTask(context) { update ->
-            onUpdate(update)
-        }
-     }
 }
