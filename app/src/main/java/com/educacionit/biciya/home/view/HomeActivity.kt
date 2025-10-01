@@ -19,12 +19,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.educacionit.biciya.R
-import com.educacionit.biciya.home.view.fragments.MapFragment
-import com.educacionit.biciya.home.view.fragments.RequestsFragment
 import com.educacionit.biciya.utils.Constants
 import com.educacionit.biciya.utils.LocationUtils
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -129,12 +125,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun startGettingUserLocation() {
-        Toast.makeText(
-            this,
-            getString(R.string.thanks_for_accepting_permission),
-            Toast.LENGTH_SHORT
-        ).show()
-
         locationUtils.createLocationSettingsTask(
             this,
             Constants.REQUEST_CHECK_SETTINGS
@@ -171,13 +161,22 @@ class HomeActivity : AppCompatActivity() {
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
             when {
-                hasLocationAccess(permissions) -> startGettingUserLocation()
+                hasLocationAccess(permissions) -> onUserJustAcceptedPermissions()
                 else -> explainWhyWeNeedAccessToLocation()
             }
         }
         locationPermissionRequest.launch(
             LOCATION_PERMISSIONS
         )
+    }
+
+    private fun onUserJustAcceptedPermissions() {
+        Toast.makeText(
+            this,
+            getString(R.string.thanks_for_accepting_permission),
+            Toast.LENGTH_SHORT
+        ).show()
+        startGettingUserLocation()
     }
 
     private fun hasLocationAccess(permissions: Map<String, @JvmSuppressWildcards Boolean>?): Boolean {
