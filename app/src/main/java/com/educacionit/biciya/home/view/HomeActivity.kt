@@ -19,17 +19,22 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.educacionit.biciya.R
+import com.educacionit.biciya.home.contracts.home.HomePresenter
+import com.educacionit.biciya.home.contracts.home.HomeView
+import com.educacionit.biciya.home.model.LocationProvider
+import com.educacionit.biciya.home.presenter.HomePresenterImpl
 import com.educacionit.biciya.utils.Constants
-import com.educacionit.biciya.utils.LocationUtils
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.lang.ref.WeakReference
 
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), HomeView {
 
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var mapFragment: MapFragment
     private lateinit var requestsFragment: RequestsFragment
-    private val locationUtils = LocationUtils()
+    private lateinit var homePresenter: HomePresenter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +46,7 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        initPresenter()
         setUpViews()
 
         initFragments()
@@ -55,30 +61,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        checkLocationPermissions()
-    }
-
-    private fun checkLocationPermissions() {
-        when {
-            // Primero chequeo si ya tengo los permisos
-            LOCATION_PERMISSIONS.all { locationPermission ->
-                ContextCompat.checkSelfPermission(
-                    this,
-                    locationPermission
-                ) == PackageManager.PERMISSION_GRANTED
-            } -> startGettingUserLocation()
-            // Si no los tengo, y ya los habia pedido, muestro un mensaje de convencimiento
-            LOCATION_PERMISSIONS.any {
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, it
-                )
-            } -> explainWhyWeNeedAccessToLocation()
-            // Si no los tengo y no los pedi, los pido
-            else -> {
-                requestPermissions()
-            }
-        }
-
+        homePresenter.checkLocationPermissions()
     }
 
     private fun initFragments() {
@@ -125,17 +108,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun startGettingUserLocation() {
-        locationUtils.createLocationSettingsTask(
-            this,
-            Constants.REQUEST_CHECK_SETTINGS
-        ) { location ->
-            runOnUiThread {
-                mapFragment.updateUserLocation(location.latitude, location.longitude)
-            }
-        }
+        homePresenter.subscribeToLocationUpdates()
     }
 
-    private fun explainWhyWeNeedAccessToLocation() {
+    override fun explainWhyWeNeedAccessToLocation() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
             val dialog: AlertDialog.Builder = AlertDialog.Builder(this)
             dialog.setTitle(getString(R.string.request_location_permission_title))
@@ -155,20 +131,6 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun requestPermissions() {
-        val locationPermissionRequest = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            when {
-                hasLocationAccess(permissions) -> onUserJustAcceptedPermissions()
-                else -> explainWhyWeNeedAccessToLocation()
-            }
-        }
-        locationPermissionRequest.launch(
-            LOCATION_PERMISSIONS
-        )
-    }
 
     private fun onUserJustAcceptedPermissions() {
         Toast.makeText(
@@ -191,6 +153,7 @@ class HomeActivity : AppCompatActivity() {
         } ?: false
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -210,5 +173,57 @@ class HomeActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
+    }
+
+    override fun showErrorMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun setLoadingVisibility(isVisible: Boolean) {
+        // TODO: implement this
+    }
+
+    override fun initPresenter() {
+        val homeModel = LocationProvider(weakContext = WeakReference(this))
+        homePresenter = HomePresenterImpl(homeView = this, homeModel = homeModel)
+    }
+
+    override fun areLocationPermissionsGranted(): Boolean {
+        return LOCATION_PERMISSIONS.all { locationPermission ->
+            ContextCompat.checkSelfPermission(
+                this,
+                locationPermission
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    override fun werePermissionsAlreadyRejected(): Boolean {
+        return LOCATION_PERMISSIONS.any {
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this, it
+            )
+        }
+    }
+
+    override fun requestLocationPermissions() {
+        val locationPermissionRequest = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                hasLocationAccess(permissions) -> onUserJustAcceptedPermissions()
+                else -> explainWhyWeNeedAccessToLocation()
+            }
+        }
+        locationPermissionRequest.launch(
+            LOCATION_PERMISSIONS
+        )
+    }
+
+    override fun onNewLocationUpdate(latitude: Double, longitude: Double) {
+        mapFragment.updateUserLocation(latitude, longitude)
+    }
+
+    override fun startExceptionResolution(resolvableApiException: ResolvableApiException) {
+        resolvableApiException.startResolutionForResult(this, Constants.REQUEST_CHECK_SETTINGS)
     }
 }
