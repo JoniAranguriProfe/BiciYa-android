@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.FrameLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,10 +19,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.educacionit.biciya.R
-import com.educacionit.biciya.home.contracts.home.HomePresenter
-import com.educacionit.biciya.home.contracts.home.HomeView
+import com.educacionit.biciya.home.contracts.home.home.HomePresenter
+import com.educacionit.biciya.home.contracts.home.home.HomeView
 import com.educacionit.biciya.home.model.LocationProvider
 import com.educacionit.biciya.home.presenter.HomePresenterImpl
 import com.educacionit.biciya.utils.Constants
@@ -35,6 +38,7 @@ class HomeActivity : AppCompatActivity(), HomeView {
     private lateinit var mapFragment: MapFragment
     private lateinit var requestsFragment: RequestsFragment
     private lateinit var homePresenter: HomePresenter
+    private lateinit var frame_progress: FrameLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +79,8 @@ class HomeActivity : AppCompatActivity(), HomeView {
 
     private fun setUpViews() {
         bottomNavigation = findViewById(R.id.bottom_navigation)
+        frame_progress = findViewById(R.id.frame_progress)
+
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -180,7 +186,7 @@ class HomeActivity : AppCompatActivity(), HomeView {
     }
 
     override fun setLoadingVisibility(isVisible: Boolean) {
-        // TODO: implement this
+        frame_progress.isVisible = isVisible
     }
 
     override fun initPresenter() {

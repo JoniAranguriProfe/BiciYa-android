@@ -11,10 +11,13 @@ android {
         applicationId = "com.educacionit.biciya"
         minSdk = 24
         targetSdk = 36
-        versionCode = 5
+        versionCode = 6
         versionName = "1.$versionCode"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "CLIENT_ID", "\"6171bef2d0784803b9152fdfc4c983b4\"")
+        buildConfigField("String", "CLIENT_SECRET", "\"9A471c0F37504d7Bb52171e474931D26\"")
     }
 
     buildTypes {
@@ -26,6 +29,11 @@ android {
             )
         }
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -47,5 +55,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.android.gms:play-services-maps:19.2.0")
+
+    //Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 
 }

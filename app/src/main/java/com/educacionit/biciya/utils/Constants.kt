@@ -6,4 +6,7 @@ object Constants {
 
     //Permissions
     const val REQUEST_CHECK_SETTINGS = 1001
+
+    //Api
+    const val BASE_URL = "https://apitransporte.buenosaires.gob.ar/ecobici/gbfs/"
 }
