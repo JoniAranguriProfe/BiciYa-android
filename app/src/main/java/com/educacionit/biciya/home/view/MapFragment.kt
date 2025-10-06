@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.educacionit.biciya.R
 import com.educacionit.biciya.home.contracts.map.model.MapModelImpl
 import com.educacionit.biciya.home.contracts.map.MapPresenter
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -77,7 +79,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
 
     override fun initPresenter() {
         presenter = MapPresenterImpl(this@MapFragment, MapModelImpl(ApiClient.ecobiciService))
-        presenter.loadStations()
+        lifecycleScope.launch {
+            presenter.loadStations()
+        }
     }
 
     override fun showStationOnMap(stations: List<Station>) {
