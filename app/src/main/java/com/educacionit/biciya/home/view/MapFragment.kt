@@ -15,6 +15,7 @@ import com.educacionit.biciya.home.contracts.map.MapPresenter
 import com.educacionit.biciya.home.contracts.map.MapView
 import com.educacionit.biciya.home.presenter.MapPresenterImpl
 import com.educacionit.biciya.models.response.Station
+import com.educacionit.biciya.network.ApiClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -75,7 +76,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
     }
 
     override fun initPresenter() {
-        presenter = MapPresenterImpl(this@MapFragment, MapModelImpl())
+        presenter = MapPresenterImpl(this@MapFragment, MapModelImpl(ApiClient.ecobiciService))
         presenter.loadStations()
     }
 
