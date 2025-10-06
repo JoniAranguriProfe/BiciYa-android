@@ -17,13 +17,11 @@ import com.educacionit.biciya.home.contracts.map.MapView
 import com.educacionit.biciya.home.presenter.MapPresenterImpl
 import com.educacionit.biciya.models.response.Station
 import com.educacionit.biciya.network.ApiClient
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.educacionit.biciya.utils.map.MapsManager
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 
 /**
@@ -36,6 +34,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
     private var googleMap: GoogleMap? = null
     private lateinit var presenter: MapPresenter
     private lateinit var frameProgress: FrameLayout
+    private val mapsManager = MapsManager()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,27 +53,34 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
         frameProgress = view.findViewById(R.id.frame_progress)
     }
 
-    override fun onMapReady(p0: GoogleMap) {
-        googleMap = p0
-        googleMap?.uiSettings?.isZoomControlsEnabled = true
-    }
-
-    fun updateUserLocation(lat: Double, lng: Double) {
-        if (!isAdded || googleMap == null) {
-            Log.e("updateUserLocation", "googleMaps es nulo")
-            return
-        }
-        val position = LatLng(lat, lng)
-        //googleMap?.clear() todo: Al actualizar la ubicación limpia el mapa, eso es correcto? se comenta por las dudas
+    override fun onMapReady(updatedMap: GoogleMap) {
+        googleMap = updatedMap
         googleMap?.uiSettings?.isZoomControlsEnabled = true
         googleMap?.uiSettings?.isMyLocationButtonEnabled = true
 
-        if (requireContext().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-            requireContext().checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        ) {
-            googleMap?.isMyLocationEnabled = true
+        googleMap?.let { safeMap ->
+            with(safeMap.uiSettings) {
+                isZoomControlsEnabled = true
+                isMyLocationButtonEnabled = true
+            }
+            // TODO: Use a single place to put the logic of permissions
+            if (requireContext().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                requireContext().checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            ) {
+                safeMap.isMyLocationEnabled = true
+            }
         }
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16f))
+    }
+
+    fun updateUserLocation(lat: Double, lng: Double) {
+        if (!isAdded) {
+            Log.e("updateUserLocation", "Fragment is not visible anymore")
+            return
+        }
+        googleMap?.let {
+            mapsManager.moveCameraToUserLocation(it, LatLng(lat, lng))
+        } ?: Log.e("updateUserLocation", "googleMaps es nulo")
+
     }
 
     override fun initPresenter() {
@@ -86,23 +92,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
 
     override fun showStationOnMap(stations: List<Station>) {
         googleMap?.let { map ->
-            map.clear() //Limpio el mapa para que no queden estaciones previas marcadas en el mapa, revisar si se agregan mas marcas que NO deban limpiarse.
-
-            val boundsBuilder = LatLngBounds.builder()
-
-            for (station in stations) {
-                val position = LatLng(station.lat, station.lon)
-                map.addMarker(
-                    MarkerOptions()
-                        .position(position)
-                        .title(station.name)
-                )
-                boundsBuilder.include(position)
-            }
-
-            val bounds = boundsBuilder.build()
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
-            map.animateCamera(cameraUpdate)
+            mapsManager.addStationMarkers(map, stations)
         }
     }
 
