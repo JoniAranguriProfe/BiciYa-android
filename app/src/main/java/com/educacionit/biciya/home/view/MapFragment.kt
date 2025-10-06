@@ -32,21 +32,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
 
     private var googleMap: GoogleMap? = null
     private lateinit var presenter: MapPresenter
-    private lateinit var frame_progress: FrameLayout
+    private lateinit var frameProgress: FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
+        initViews(view)
+        initPresenter()
+        return view
+    }
 
+    private fun initViews(view: View) {
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        initPresenter()
-
-        return view
+        frameProgress = view.findViewById(R.id.frame_progress)
     }
 
     override fun onMapReady(p0: GoogleMap) {
@@ -105,7 +107,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
 
     override fun setLoadingVisibility(isVisible: Boolean) {
         Log.e("setLoadingVisibility", isVisible.toString())
-        frame_progress = view?.findViewById(R.id.frame_progress) ?: return  //todo : deberia llamar al metodo findViewById en otro metodo pero crashea
-        frame_progress.isVisible = isVisible
+        frameProgress.isVisible = isVisible
     }
 }
