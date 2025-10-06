@@ -11,4 +11,6 @@
     <string name="thanks_for_accepting_permission">Gracias por aceptar el permiso!</string>
     <string name="go">Dale</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="error_message">Error desconocido</string>"
 </resources>

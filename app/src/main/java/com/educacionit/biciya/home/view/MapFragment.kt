@@ -6,22 +6,33 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.educacionit.biciya.R
+import com.educacionit.biciya.home.contracts.map.model.MapModelImpl
+import com.educacionit.biciya.home.contracts.map.MapPresenter
+import com.educacionit.biciya.home.contracts.map.MapView
+import com.educacionit.biciya.home.presenter.MapPresenterImpl
+import com.educacionit.biciya.models.response.Station
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 
 /**
  * A simple [Fragment] subclass.
  * Use the [MapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, MapView {
 
     private var googleMap: GoogleMap? = null
+    private lateinit var presenter: MapPresenter
+    private lateinit var frame_progress: FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +43,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        initPresenter()
 
         return view
     }
@@ -47,7 +60,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             return
         }
         val position = LatLng(lat, lng)
-        googleMap?.clear()
+        //googleMap?.clear() todo: Al actualizar la ubicación limpia el mapa, eso es correcto? se comenta por las dudas
         googleMap?.uiSettings?.isZoomControlsEnabled = true
         googleMap?.uiSettings?.isMyLocationButtonEnabled = true
 
@@ -59,4 +72,40 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16f))
     }
 
+    override fun initPresenter() {
+        presenter = MapPresenterImpl(this@MapFragment, MapModelImpl())
+        presenter.loadStations()
+    }
+
+    override fun showStationOnMap(stations: List<Station>) {
+        googleMap?.let { map ->
+            map.clear() //Limpio el mapa para que no queden estaciones previas marcadas en el mapa, revisar si se agregan mas marcas que NO deban limpiarse.
+
+            val boundsBuilder = LatLngBounds.builder()
+
+            for (station in stations) {
+                val position = LatLng(station.lat, station.lon)
+                map.addMarker(
+                    MarkerOptions()
+                        .position(position)
+                        .title(station.name)
+                )
+                boundsBuilder.include(position)
+            }
+
+            val bounds = boundsBuilder.build()
+            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100)
+            map.animateCamera(cameraUpdate)
+        }
+    }
+
+    override fun showErrorMessage(message: String) {
+        Log.e("showErrorMessage", message)
+    }
+
+    override fun setLoadingVisibility(isVisible: Boolean) {
+        Log.e("setLoadingVisibility", isVisible.toString())
+        frame_progress = view?.findViewById(R.id.frame_progress) ?: return  //todo : deberia llamar al metodo findViewById en otro metodo pero crashea
+        frame_progress.isVisible = isVisible
+    }
 }

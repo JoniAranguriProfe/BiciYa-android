@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="background_progress">#66000000</color>
+    <color name="red">#FF990000</color>
 </resources>
