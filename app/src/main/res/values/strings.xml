@@ -12,5 +12,15 @@
     <string name="go">Dale</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="error_message">Error desconocido</string>"
+    <string name="error_message">Error desconocido</string>
+
+    <!--Requets Popup-->
+    <string name="reserve_bikes">Reserva bicicletas</string>
+    <string name="number_of_bikes">Número de bicicletas</string>
+    <string name="expiration_date">Fecha Hasta</string>
+    <string name="date">Fecha</string>
+    <string name="search_range">Rango de búsqueda (en metros)</string>
+    <string name="reserve">Reservar</string>
+
+
 </resources>

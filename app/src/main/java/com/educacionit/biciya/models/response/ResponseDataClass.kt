@@ -13,14 +13,19 @@ data class StationData(
 )
 
 data class Station(
-    val station_id: String,
+    @SerializedName("station_id")
+    val stationId: String,
     val name: String,
     val lat: Double,
     val lon: Double,
     val address: String?,
-    val cross_street: String?,
-    val post_code: String?,
+    @SerializedName("cross_street")
+    val crossStreet: String?,
+    @SerializedName("post_code")
+    val postCode: String?,
     val capacity: Int,
-    val rental_methods: List<String>,
-    val nearby_distance: Double,
+    @SerializedName("rental_methods")
+    val rentalMethods: List<String>,
+    @SerializedName("nearby_distance")
+    val nearbyDistance: Double,
 )
