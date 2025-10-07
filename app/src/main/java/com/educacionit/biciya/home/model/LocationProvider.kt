@@ -3,7 +3,7 @@ package com.educacionit.biciya.home.model
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Looper
-import com.educacionit.biciya.home.contracts.home.home.HomeModel
+import com.educacionit.biciya.home.contracts.home.HomeModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest

@@ -1,9 +1,9 @@
 package com.educacionit.biciya.home.presenter
 
 import android.content.IntentSender
-import com.educacionit.biciya.home.contracts.home.home.HomeModel
-import com.educacionit.biciya.home.contracts.home.home.HomePresenter
-import com.educacionit.biciya.home.contracts.home.home.HomeView
+import com.educacionit.biciya.home.contracts.home.HomeModel
+import com.educacionit.biciya.home.contracts.home.HomePresenter
+import com.educacionit.biciya.home.contracts.home.HomeView
 import com.google.android.gms.common.api.ResolvableApiException
 
 class HomePresenterImpl(val homeView: HomeView, val homeModel: HomeModel) : HomePresenter {
