@@ -1,5 +1,6 @@
 package com.educacionit.biciya.home.view
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,8 @@ import com.educacionit.biciya.home.contracts.map.MapView
 import com.educacionit.biciya.home.presenter.MapPresenterImpl
 import com.educacionit.biciya.models.response.Station
 import com.educacionit.biciya.network.ApiClient
+import com.educacionit.biciya.utils.Constants
+import com.educacionit.biciya.utils.location.LocationPermissionManager
 import com.educacionit.biciya.utils.map.MapsManager
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -53,6 +56,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
         frameProgress = view.findViewById(R.id.frame_progress)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(updatedMap: GoogleMap) {
         googleMap = updatedMap
         googleMap?.uiSettings?.isZoomControlsEnabled = true
@@ -63,11 +67,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
                 isZoomControlsEnabled = true
                 isMyLocationButtonEnabled = true
             }
-            // TODO: Use a single place to put the logic of permissions
-            if (requireContext().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                requireContext().checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-            ) {
+
+            if (LocationPermissionManager.hasLocationPermission(requireContext())) {
                 safeMap.isMyLocationEnabled = true
+            } else {
+                LocationPermissionManager.requestLocationPermission(this, Constants.REQUEST_LOCATION_SETTINGS)
             }
         }
     }
