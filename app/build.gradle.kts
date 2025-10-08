@@ -48,7 +48,7 @@ android {
 
         create("paid"){
             dimension="monetization"
-            applicationId = ".paid"
+            applicationIdSuffix = ".paid"
             versionCode= 30002
             versionName= "3.0.2"
 
