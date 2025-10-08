@@ -21,12 +21,37 @@ android {
     }
 
     buildTypes {
-        release {
+        debug{
             isMinifyEnabled = false
+            isDebuggable = true
+        }
+        release {
+            isMinifyEnabled = true
+            isDebuggable = false
+            buildConfigField("String", "CLIENT_ID", "\"asdfasfasdf\"")
+            buildConfigField("String", "CLIENT_SECRET", "\"asdfasdfasdf\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    flavorDimensions+= listOf("monetization")
+    productFlavors {
+        create("free"){
+            dimension="monetization"
+            applicationIdSuffix = ".free"
+            versionCode= 10000
+            versionName= "1.0.0"
+        }
+
+        create("paid"){
+            dimension="monetization"
+            applicationId = ".paid"
+            versionCode= 30002
+            versionName= "3.0.2"
+
         }
     }
 
