@@ -62,7 +62,8 @@
             android:editable="false"
             android:hint="@string/date"
             android:includeFontPadding="false"
-            android:textColor="@color/gray"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDateExpirationtitle" />
 
