@@ -1,41 +1,56 @@
 package com.educacionit.biciya.login.presenter
 
 import com.educacionit.biciya.login.contracts.LoginContract
+import com.educacionit.biciya.login.model.LoginException
+import com.educacionit.biciya.login.presenter.domain.UsuarioApp
+import com.educacionit.biciya.login.presenter.domain.convertirAUsuarioApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 class LoginPresenterImpl(
-    val loginView: LoginContract.View,
-    val loginModel: LoginContract.Model,
-    val presenterScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private val loginView: LoginContract.View,
+    private val loginModel: LoginContract.Model,
+    private val presenterScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) :
     LoginContract.Presenter {
 
     override suspend fun performLogin(email: String?, password: String?) {
-        presenterScope.launch {
-            loginView.setLoadingVisibility(true)
-            if (email.isNullOrEmpty() || !validateEmail(email)) {
-                loginView.setLoadingVisibility(false)
-                loginView.showErrorMessage("El email ingresado no es válido!")
-                return@launch
-            }
-            if (password.isNullOrEmpty() || !validatePassword(password)) {
-                loginView.setLoadingVisibility(false)
-                loginView.showErrorMessage("La contraseña no cumple con los requisitos!")
-                return@launch
-            }
+        loginView.setLoadingVisibility(true)
 
-            val loginResult = loginModel.performLogin(email, password)
+        if (email.isNullOrEmpty() || !validateEmail(email)) {
             loginView.setLoadingVisibility(false)
-            if (!loginResult) {
-                loginView.showErrorMessage("Error en el login!")
-                return@launch
-            }
-
-            loginView.showSuccessMessage("Logueado exitosamente!")
-            loginView.goToHomeScreen()
+            loginView.showErrorMessage("El email ingresado no es válido!")
+            return
         }
+        if (password.isNullOrEmpty() || !validatePassword(password)) {
+            loginView.setLoadingVisibility(false)
+            loginView.showErrorMessage("La contraseña no cumple con los requisitos!")
+            return
+        }
+
+        try {
+            val userServer = presenterScope.async {
+                loginModel.performLogin(email, password)
+            }
+            val usuarioApp = userServer.await().convertirAUsuarioApp()
+            saveUserInStorage(usuarioApp)
+            loginView.showSuccessMessage("Bienvenido ${usuarioApp.nombre}")
+            loginView.goToHomeScreen()
+        } catch (e: LoginException) {
+            loginView.showErrorMessage("Error en el login!")
+            return
+        } finally {
+            loginView.setLoadingVisibility(false)
+        }
+
+    }
+
+    private fun saveUserInStorage(usuarioApp: UsuarioApp) {
+        // Guardar en db local
     }
 
     override fun validateEmail(email: String): Boolean {
