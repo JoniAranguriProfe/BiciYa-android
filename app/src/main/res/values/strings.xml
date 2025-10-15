@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">BiciYa</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+    <string name="request_location">Necesitas activar la ubicación</string>
+    <string name="request_location_permission_title">Necesitamos acceder a tu ubicacion!</string>
+    <string name="request_location_permission_message">Parece que no aceptaste el acceso a ubicacion, quisieras modificar eso en la configuracion de la app?</string>
+    <string name="thanks_for_accepting_permission">Gracias por aceptar el permiso!</string>
+    <string name="go">Dale</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="error_message">Error desconocido</string>
+
+    <!--Requets Popup-->
+    <string name="reserve_bikes">Reserva bicicletas</string>
+    <string name="number_of_bikes">Número de bicicletas</string>
+    <string name="expiration_date">Fecha Hasta</string>
+    <string name="date">Fecha</string>
+    <string name="search_range">Rango de búsqueda (en metros)</string>
+    <string name="reserve">Reservar</string>
+
+
 </resources>
