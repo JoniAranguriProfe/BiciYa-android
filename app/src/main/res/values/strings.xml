@@ -3,8 +3,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-
-
+    <string name="bikes_requests">"Bicicletas: %1$s</string>
+    <string name="range_requests">"Rango de Busqueda: %1$s</string>
+    <string name="expiration_date_requests">Expira: %1$s</string>
     <string name="request_location">Necesitas activar la ubicación</string>
     <string name="request_location_permission_title">Necesitamos acceder a tu ubicacion!</string>
     <string name="request_location_permission_message">Parece que no aceptaste el acceso a ubicacion, quisieras modificar eso en la configuracion de la app?</string>
@@ -14,13 +15,21 @@
 
     <string name="error_message">Error desconocido</string>
 
-    <!--Requets Popup-->
     <string name="reserve_bikes">Reserva bicicletas</string>
     <string name="number_of_bikes">Número de bicicletas</string>
     <string name="expiration_date">Fecha Hasta</string>
     <string name="date">Fecha</string>
     <string name="search_range">Rango de búsqueda (en metros)</string>
     <string name="reserve">Reservar</string>
+    <string name="active_request">Solicitud Activa</string>
+    <string name="my_requests">Mis solicitudes</string>
+    <string name="inactive_requests">Solicitudes Inactivas</string>
+    <string name="request_saved_notification">Solicitud almacenada</string>
+    <string name="request_saved_notification_message">Solicitud almacenada exitosamente</string>
+    <string name="request_error">Error al obtener las solicitudes: %1$s</string>
+    <string name="no_expiration_date_message">Debe ingresar una fecha de expiración</string>
+    <string name="no_notification_permission_message">No se pueden mostrar notificaciones sin permiso</string>
+    <string name="no_requests_message">No tiene solicitudes realizadas</string>
 
 
 </resources>
