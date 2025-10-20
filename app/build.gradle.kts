@@ -22,7 +22,7 @@ android {
     }
 
     buildTypes {
-        debug{
+        debug {
             isMinifyEnabled = false
             isDebuggable = true
         }
@@ -38,20 +38,20 @@ android {
         }
     }
 
-    flavorDimensions+= listOf("monetization")
+    flavorDimensions += listOf("monetization")
     productFlavors {
-        create("free"){
-            dimension="monetization"
+        create("free") {
+            dimension = "monetization"
             applicationIdSuffix = ".free"
-            versionCode= 10000
-            versionName= "1.0.0"
+            versionCode = 10000
+            versionName = "1.0.0"
         }
 
-        create("paid"){
-            dimension="monetization"
+        create("paid") {
+            dimension = "monetization"
             applicationIdSuffix = ".paid"
-            versionCode= 30002
-            versionName= "3.0.2"
+            versionCode = 30002
+            versionName = "3.0.2"
 
         }
     }
@@ -77,14 +77,14 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
-    testImplementation(libs.junit)
+    implementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.android.gms:play-services-maps:19.2.0")
 
     //Retrofit
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     //Room
     implementation("androidx.room:room-runtime:2.8.2")
@@ -92,4 +92,13 @@ dependencies {
 
     //Lottie
     implementation(libs.lottie)
+
+    testImplementation(libs.junit)
+    testImplementation("org.mockito:mockito-core:5.+")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.+")
+
+    // Coroutines testing
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.+")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }
