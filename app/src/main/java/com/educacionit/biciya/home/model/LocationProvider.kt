@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Looper
 import com.educacionit.biciya.home.contracts.home.HomeModel
+import com.educacionit.biciya.home.WorkNotification
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -14,7 +15,7 @@ import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.maps.model.LatLng
 import java.lang.ref.WeakReference
 
-class LocationProvider(private val weakContext: WeakReference<Context>) : HomeModel {
+class LocationProvider(private val weakContext: WeakReference<Context?>) : HomeModel {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
@@ -60,5 +61,10 @@ class LocationProvider(private val weakContext: WeakReference<Context>) : HomeMo
                 onFailure(exception)
             }
         }
+    }
+
+    fun unSuscribeToLocationUpdates()
+    {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }

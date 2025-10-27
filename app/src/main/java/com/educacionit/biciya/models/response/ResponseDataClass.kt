@@ -1,5 +1,6 @@
 package com.educacionit.biciya.models.response
 
+import com.educacionit.biciya.data.database.StationEntity
 import com.google.gson.annotations.SerializedName
 
 data class StationInformationResponse(
@@ -28,4 +29,6 @@ data class Station(
     val rentalMethods: List<String>,
     @SerializedName("nearby_distance")
     val nearbyDistance: Double,
-)
+){
+    fun toStationEntity(): StationEntity = StationEntity(stationId,name,lat,lon,address,capacity)
+}
