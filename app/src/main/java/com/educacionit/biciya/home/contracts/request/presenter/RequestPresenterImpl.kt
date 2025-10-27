@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.educacionit.biciya.R
-import com.educacionit.biciya.data.RequestRepository
+import com.educacionit.biciya.home.model.RequestRepository
 import com.educacionit.biciya.data.database.RequestEntity
 import com.educacionit.biciya.home.contracts.request.RequestView
 import com.educacionit.biciya.utils.notification.NotificationHelper

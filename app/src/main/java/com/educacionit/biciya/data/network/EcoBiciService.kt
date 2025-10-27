@@ -1,7 +1,7 @@
-package com.educacionit.biciya.network
+package com.educacionit.biciya.data.network
 
 import com.educacionit.biciya.BuildConfig
-import com.educacionit.biciya.models.response.StationInformationResponse
+import com.educacionit.biciya.data.network.models.response.StationInformationResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

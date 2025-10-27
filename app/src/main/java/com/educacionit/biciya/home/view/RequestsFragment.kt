@@ -16,8 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.educacionit.biciya.R
-import com.educacionit.biciya.adapter.RequestAdapter
-import com.educacionit.biciya.data.RequestRepository
+import com.educacionit.biciya.home.view.adapter.RequestAdapter
+import com.educacionit.biciya.home.model.RequestRepository
 import com.educacionit.biciya.data.database.AppDatabase
 import com.educacionit.biciya.data.database.RequestEntity
 import com.educacionit.biciya.home.contracts.request.RequestView

@@ -1,7 +1,6 @@
 package com.educacionit.biciya.home.view
 
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,8 +15,8 @@ import com.educacionit.biciya.home.contracts.map.model.MapModelImpl
 import com.educacionit.biciya.home.contracts.map.MapPresenter
 import com.educacionit.biciya.home.contracts.map.MapView
 import com.educacionit.biciya.home.presenter.MapPresenterImpl
-import com.educacionit.biciya.models.response.Station
-import com.educacionit.biciya.network.ApiClient
+import com.educacionit.biciya.data.network.models.response.Station
+import com.educacionit.biciya.data.network.ApiClientProvider
 import com.educacionit.biciya.utils.Constants
 import com.educacionit.biciya.utils.location.LocationPermissionManager
 import com.educacionit.biciya.utils.map.MapsManager
@@ -88,7 +87,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapView {
     }
 
     override fun initPresenter() {
-        presenter = MapPresenterImpl(this@MapFragment, MapModelImpl(ApiClient.ecobiciService))
+        presenter = MapPresenterImpl(this@MapFragment, MapModelImpl(ApiClientProvider.ecobiciService))
         lifecycleScope.launch {
             presenter.loadStations()
         }

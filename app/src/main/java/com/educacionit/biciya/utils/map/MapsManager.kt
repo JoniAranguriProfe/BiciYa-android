@@ -1,6 +1,6 @@
 package com.educacionit.biciya.utils.map
 
-import com.educacionit.biciya.models.response.Station
+import com.educacionit.biciya.data.network.models.response.Station
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
