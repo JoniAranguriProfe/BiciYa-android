@@ -13,6 +13,7 @@ interface RequestView {
     fun onRequestError(msg: String)
     fun onInactiveRequestsLoaded(requests: List<RequestEntity>)
     fun onActiveRequestLoaded(request: RequestEntity)
+    fun setNoRequestsVisibility(isVisible : Boolean)
     fun setNoActiveRequestsVisibility(isVisible: Boolean)
     fun setInactivesRequestsVisibility(isVisible: Boolean)
 }

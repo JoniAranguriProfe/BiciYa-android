@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.educacionit.biciya.R
 import com.educacionit.biciya.home.contracts.request.presenter.RequestPresenter
+import com.educacionit.biciya.utils.Constants
 import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -28,7 +29,7 @@ class PopUpManager(
     companion object {
         val MINIMUM_BIKES_REQUEST = 1
         val MAXIMUM_BIKES_REQUEST = 20
-        val DATE_FORMAT = "dd/MM/yyyy HH:mm"
+        val DATE_FORMAT = Constants.DATE_FORMAT
         val DEFAULT_DISTANCE = 100
     }
 

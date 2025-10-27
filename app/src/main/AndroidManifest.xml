@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -32,6 +33,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD47IRfTc5mSGqV3AA6blKwv9Vs5O3wU8Y" />
+
+        <service
+            android:name=".utils.service.StationCheckService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
     </application>
 
 </manifest>
