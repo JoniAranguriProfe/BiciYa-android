@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.educacionit.biciya.R
-import com.educacionit.biciya.home.contracts.map.model.MapModelImpl
+import com.educacionit.biciya.home.model.MapModelImpl
 import com.educacionit.biciya.home.contracts.map.MapPresenter
 import com.educacionit.biciya.home.contracts.map.MapView
 import com.educacionit.biciya.home.presenter.MapPresenterImpl

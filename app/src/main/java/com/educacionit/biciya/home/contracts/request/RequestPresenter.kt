@@ -1,4 +1,4 @@
-package com.educacionit.biciya.home.contracts.request.presenter
+package com.educacionit.biciya.home.contracts.request
 
 import android.content.Context
 

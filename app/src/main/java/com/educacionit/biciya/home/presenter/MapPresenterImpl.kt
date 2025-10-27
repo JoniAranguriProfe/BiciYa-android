@@ -1,6 +1,6 @@
 package com.educacionit.biciya.home.presenter
 
-import com.educacionit.biciya.home.contracts.map.model.MapModel
+import com.educacionit.biciya.home.contracts.map.MapModel
 import com.educacionit.biciya.home.contracts.map.MapPresenter
 import com.educacionit.biciya.home.contracts.map.MapView
 import kotlinx.coroutines.CoroutineScope

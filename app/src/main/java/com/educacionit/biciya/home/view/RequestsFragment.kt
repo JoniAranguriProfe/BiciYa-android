@@ -21,7 +21,7 @@ import com.educacionit.biciya.home.model.RequestRepository
 import com.educacionit.biciya.data.database.AppDatabase
 import com.educacionit.biciya.data.database.RequestEntity
 import com.educacionit.biciya.home.contracts.request.RequestView
-import com.educacionit.biciya.home.contracts.request.presenter.RequestPresenterImpl
+import com.educacionit.biciya.home.presenter.RequestPresenterImpl
 import com.educacionit.biciya.utils.notification.NotificationHelper
 import com.educacionit.biciya.utils.notification.NotificationPermissionManager
 import com.educacionit.biciya.utils.popup.PopUpManager

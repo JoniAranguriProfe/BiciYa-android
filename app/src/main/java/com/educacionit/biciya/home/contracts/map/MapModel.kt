@@ -1,4 +1,4 @@
-package com.educacionit.biciya.home.contracts.map.model
+package com.educacionit.biciya.home.contracts.map
 
 import com.educacionit.biciya.data.network.models.response.StationInformationResponse
 
