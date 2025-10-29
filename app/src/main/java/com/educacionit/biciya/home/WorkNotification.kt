@@ -3,6 +3,7 @@ package com.educacionit.biciya.home
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -10,31 +11,57 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.educacionit.biciya.data.StationRepository
 import com.educacionit.biciya.data.database.AppDatabase
-import com.educacionit.biciya.data.database.StationDao
 import com.educacionit.biciya.data.database.StationEntity
 import com.educacionit.biciya.home.model.LocationProvider
 import com.educacionit.biciya.network.ApiClient
+import com.educacionit.biciya.network.EcoBiciService
 import com.educacionit.biciya.utils.notification.NotificationHelper
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
-class WorkNotification(appContext: Context, workerParams: WorkerParameters) : Worker(appContext,workerParams) {
+interface DistanceCalculator {
+    fun calculateDistance(distanceOne: LatLng, distanceTwo: LatLng): Float
+}
 
-    //var lon: Double? = null
-    //var lat: Double? = null
-    private lateinit var dao : StationDao
-    private lateinit var station: List<StationEntity>
+class WorkNotification(appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
+
+    @VisibleForTesting
+    var distanceCalculator: DistanceCalculator = object : DistanceCalculator {
+        override fun calculateDistance(distanceOne: LatLng, distanceTwo: LatLng): Float {
+            val result = FloatArray(1)
+            Location.distanceBetween(
+                distanceOne.latitude,
+                distanceOne.longitude,
+                distanceTwo.latitude,
+                distanceTwo.longitude,
+                result
+            )
+            return result.first()
+        }
+    }
+
+    @VisibleForTesting
+    lateinit var stationRepository: StationRepository
+
+    lateinit var ecoBiciService: EcoBiciService
+
+    @VisibleForTesting
+    var stations: List<StationEntity> = emptyList()
+
+
     override fun doWork(): Result {
-
-        dao = AppDatabase.Companion.getInstance(applicationContext).stationDao()
+        stationRepository = StationRepository(
+            dao = AppDatabase.Companion.getInstance(applicationContext).stationDao()
+        )
+        ecoBiciService = ApiClient.ecobiciService
 
         CoroutineScope(Dispatchers.IO).launch {
-            getStationLocation()
+            getStationLocations()
             val locationProvider = LocationProvider(WeakReference(applicationContext))
             locationProvider.subscribeToLocationUpdates(
                 onaLocationUpdate = { location ->
@@ -46,91 +73,67 @@ class WorkNotification(appContext: Context, workerParams: WorkerParameters) : Wo
                 }
             )
 
-
         }
 
         return Result.success()
     }
 
-    private fun calculateDistance(
-        userLocation: LatLng
-    ) : Boolean {
-
-        if(station.isEmpty())
-            return false
-
-        for ( i in station.indices) {
-
-            val result = FloatArray(1)
-            val location = Location.distanceBetween(
-                userLocation.latitude,
-                userLocation.longitude,
-                station[i].lat,
-                station[i].lon,
-                result
-            )
-
-            if (result[0] < DISTANCE_METERS) {
-                return true
-            }
-
-        }
-        return false
+    @VisibleForTesting
+    suspend fun getStationLocations() {
+        stations = stationRepository.getAllStations()
     }
 
-    private suspend fun getStationLocation() {
-        station = StationRepository(dao).getAllStations()
-    }
-    private suspend fun updateStations(userLocation: LatLng)
-    {
-        val response = ApiClient.ecobiciService.getStationInformation()
-        val stationListInformation = response.body()
-        val stationList = stationListInformation?.data?.stations?.map{it.toStationEntity()}
-
-
-        for ( i in stationList!!.indices)
-        {
-            val result = FloatArray(1)
-            val location = Location.distanceBetween(
-                userLocation.latitude,
-                userLocation.longitude,
-                stationList[i].lat,
-                stationList[i].lon,
-                result
-            )
-            if (result[0] < DISTANCE_METERS) {
-                StationRepository(dao).insertStation(stationList[i])
+    @VisibleForTesting
+    suspend fun updateNearStations(userLocation: LatLng) {
+        val response = ecoBiciService.getStationInformation()
+        val stationList = response.body()?.data?.stations?.map { it.toStationEntity() }
+        stationList?.let { stationListSafe ->
+            stationListSafe.forEach {
+                if (isNearToStation(userLocation, listOf(it))) {
+                    stationRepository.insertStation(it)
+                }
             }
 
         }
 
     }
+
     fun processLocation(userLocation: LatLng) {
-
         print("Obtuve usuario")
         print("userLocation: ${userLocation.longitude} - ${userLocation.latitude}")
-        var isClose = calculateDistance(userLocation)
-        if(isClose) {
+        if (isNearToStation(userLocation, this.stations)) {
             NotificationHelper.showRequestSavedNotification(applicationContext)
-        }
-        else
-        {
+        } else {
             CoroutineScope(Dispatchers.IO).launch {
-                updateStations(userLocation)
-                getStationLocation()
+                updateNearStations(userLocation)
+                getStationLocations()
             }
-            isClose = calculateDistance(userLocation)
-            if(isClose) {
+            if (isNearToStation(userLocation, this.stations)) {
                 NotificationHelper.showRequestSavedNotification(applicationContext)
             }
         }
 
     }
-    companion object
-    {
+
+    private fun isNearToStation(
+        userLocation: LatLng, stationList: List<StationEntity>
+    ): Boolean {
+        if (stationList.isEmpty())
+            return false
+
+        stationList.forEach {
+            val distanceToCurrentStation =
+                distanceCalculator.calculateDistance(userLocation, LatLng(it.lat, it.lon))
+            if (distanceToCurrentStation < MAX_DISTANCE_METERS) {
+                return true
+            }
+        }
+        return false
+    }
+
+    companion object {
         lateinit var work: WorkManager
-        fun saveNotification( tag : String , duration: Long , ctx : Context)
-        {
+        fun saveNotification(tag: String, duration: Long, ctx: Context) {
 
             val notificationWorkerRequest =
                 PeriodicWorkRequestBuilder<WorkNotification>(duration, TimeUnit.MINUTES)
@@ -138,16 +141,18 @@ class WorkNotification(appContext: Context, workerParams: WorkerParameters) : Wo
                     .setInitialDelay(10, TimeUnit.SECONDS)
                     .build()
             work = WorkManager.getInstance(ctx)
-            work.enqueueUniquePeriodicWork("WorkNotification",
+            work.enqueueUniquePeriodicWork(
+                "WorkNotification",
                 ExistingPeriodicWorkPolicy.KEEP,
-                notificationWorkerRequest)//enqueue(notificationWorkerRequest)
+                notificationWorkerRequest
+            )
 
         }
-        fun cancelNotification(tag : String)
-        {
+
+        fun cancelNotification(tag: String) {
             work.cancelAllWork()
         }
 
-        const val DISTANCE_METERS = 3000.0
+        const val MAX_DISTANCE_METERS = 3000.0
     }
 }

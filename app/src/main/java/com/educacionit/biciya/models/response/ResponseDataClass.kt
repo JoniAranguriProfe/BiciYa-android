@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName
 data class StationInformationResponse(
     val last_updated: Long,
     val ttl: Int,
-    val data: StationData
+    var data: StationData
 )
 
 data class StationData(
-    val stations: List<Station>
+    var stations: List<Station>
 )
 
 data class Station(
