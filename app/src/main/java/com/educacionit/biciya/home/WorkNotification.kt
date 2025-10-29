@@ -95,12 +95,9 @@ class WorkNotification(appContext: Context, workerParams: WorkerParameters) :
         val response = ecoBiciService.getStationInformation()
         val stationList = response.body()?.data?.stations?.map { it.toStationEntity() }
         stationList?.let { stationListSafe ->
-            stationListSafe.forEach {
-                if (isNearToStation(userLocation, listOf(it))) {
-                    stationRepository.insertStation(it)
-                }
+            stationListSafe.filter { isNearToStation(userLocation, listOf(it)) }.forEach {
+                stationRepository.insertStation(it)
             }
-
         }
 
     }
@@ -127,15 +124,12 @@ class WorkNotification(appContext: Context, workerParams: WorkerParameters) :
     ): Boolean {
         if (stationList.isEmpty())
             return false
-
-        stationList.forEach {
-            val distanceToCurrentStation =
-                distanceCalculator.calculateDistance(userLocation, LatLng(it.lat, it.lon))
-            if (distanceToCurrentStation < MAX_DISTANCE_METERS) {
-                return true
-            }
+        return stationList.any {
+            distanceCalculator.calculateDistance(
+                userLocation,
+                LatLng(it.lat, it.lon)
+            ) < MAX_DISTANCE_METERS
         }
-        return false
     }
 
     companion object {
