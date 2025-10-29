@@ -2,7 +2,6 @@ package com.educacionit.biciya.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.educacionit.biciya.models.response.Station
 
 @Entity(tableName = "station")
 data class StationEntity(

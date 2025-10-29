@@ -3,10 +3,7 @@ package com.educacionit.biciya.utils.notification
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresPermission
@@ -14,11 +11,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.educacionit.biciya.R
-import com.educacionit.biciya.home.view.HomeActivity
-import com.educacionit.biciya.models.response.Station
+import com.educacionit.biciya.data.network.models.response.Station
 import com.educacionit.biciya.utils.Constants
-import okhttp3.internal.notify
-import kotlin.jvm.java
 
 object NotificationHelper {
 

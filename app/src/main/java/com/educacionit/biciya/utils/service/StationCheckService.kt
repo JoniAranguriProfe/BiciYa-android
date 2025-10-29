@@ -10,17 +10,25 @@ import androidx.annotation.RequiresPermission
 import com.educacionit.biciya.R
 import com.educacionit.biciya.data.database.AppDatabase
 import com.educacionit.biciya.data.database.RequestEntity
-import com.educacionit.biciya.models.response.Station
-import com.educacionit.biciya.network.ApiClient
+import com.educacionit.biciya.data.network.ApiClientProvider
+import com.educacionit.biciya.data.network.models.response.Station
 import com.educacionit.biciya.utils.Constants
 import com.educacionit.biciya.utils.notification.NotificationHelper
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlin.let
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class StationCheckService : Service() {
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -102,7 +110,7 @@ class StationCheckService : Service() {
     }
 
     private suspend fun getStationsByApi(): List<Station>? {
-        val response = ApiClient.ecobiciService.getStationInformation()
+        val response = ApiClientProvider.ecobiciService.getStationInformation()
         val stations = response.body()?.data?.stations
         return stations
     }

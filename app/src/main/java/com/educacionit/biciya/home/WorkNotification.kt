@@ -12,9 +12,9 @@ import androidx.work.WorkerParameters
 import com.educacionit.biciya.data.StationRepository
 import com.educacionit.biciya.data.database.AppDatabase
 import com.educacionit.biciya.data.database.StationEntity
+import com.educacionit.biciya.data.network.ApiClientProvider
+import com.educacionit.biciya.data.network.EcoBiciService
 import com.educacionit.biciya.home.model.LocationProvider
-import com.educacionit.biciya.network.ApiClient
-import com.educacionit.biciya.network.EcoBiciService
 import com.educacionit.biciya.utils.notification.NotificationHelper
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
@@ -65,7 +65,7 @@ class WorkNotification(appContext: Context, workerParams: WorkerParameters) :
         stationRepository = StationRepository(
             dao = AppDatabase.Companion.getInstance(applicationContext).stationDao()
         )
-        ecoBiciService = ApiClient.ecobiciService
+        ecoBiciService = ApiClientProvider.ecobiciService
 
         CoroutineScope(Dispatchers.IO).launch {
             getStationLocations()
