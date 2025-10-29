@@ -1,13 +1,15 @@
 package com.educacionit.biciya.home.contracts.request.presenter
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import com.educacionit.biciya.R
 import com.educacionit.biciya.data.RequestRepository
 import com.educacionit.biciya.data.database.RequestEntity
 import com.educacionit.biciya.home.contracts.request.RequestView
 import com.educacionit.biciya.utils.notification.NotificationHelper
+import com.educacionit.biciya.utils.service.StationCheckService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,7 +29,6 @@ class RequestPresenterImpl(
             return
         }
 
-
         try {
             withContext(presenterScope.coroutineContext) {
                 val activeRequest = repository.getActiveRequest()
@@ -43,6 +44,13 @@ class RequestPresenterImpl(
                     active = true
                 )
                 repository.insertRequest(newRequest)
+            }
+            Log.e("saveRequest" , "saveRequest - pre-startStationCheckWorker")
+            val intent = Intent(context, StationCheckService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
             }
 
             view.onRequestSaved()
@@ -64,6 +72,7 @@ class RequestPresenterImpl(
                 view.setInactivesRequestsVisibility(true)
             } else {
                 view.setInactivesRequestsVisibility(false)
+                view.setNoRequestsVisibility(false)
                 view.onInactiveRequestsLoaded(requests)
             }
         } catch (e: Exception) {
@@ -83,6 +92,7 @@ class RequestPresenterImpl(
             activeRequests?.let {
                 Log.d("getActiveRequest()", "Hay una solicitud activa")
                 view.setNoActiveRequestsVisibility(false)
+                view.setNoRequestsVisibility(false)
                 view.onActiveRequestLoaded(activeRequests)
             } ?: run {
                 Log.d("getActiveRequest()", "No hay solicitud activa")

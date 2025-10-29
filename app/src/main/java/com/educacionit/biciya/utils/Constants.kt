@@ -3,6 +3,8 @@ package com.educacionit.biciya.utils
 object Constants {
     const val STATE_INSTANCE = "STATE_INSTANCE"
 
+    //String
+    const val DATE_FORMAT = "dd/MM/yyyy HH:mm"
 
     //Permissions
     const val REQUEST_LOCATION_SETTINGS = 1000
@@ -16,4 +18,5 @@ object Constants {
 
     //Api
     const val BASE_URL = "https://apitransporte.buenosaires.gob.ar/ecobici/gbfs/"
+
 }
