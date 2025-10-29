@@ -46,7 +46,8 @@ class LocationProvider(private val weakContext: WeakReference<Context?>) : HomeM
                 locationCallback = object : LocationCallback() {
                     override fun onLocationResult(locationResult: LocationResult) {
                         locationResult.lastLocation?.let {
-                            onaLocationUpdate(LatLng(it.latitude, it.longitude))
+                            val latLong = LatLng(it.latitude, it.longitude)
+                            onaLocationUpdate(latLong)
                         }
                     }
                 }

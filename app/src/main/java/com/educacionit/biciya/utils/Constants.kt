@@ -5,6 +5,8 @@ import java.util.UUID
 object Constants {
     const val STATE_INSTANCE = "STATE_INSTANCE"
 
+    //String
+    const val DATE_FORMAT = "dd/MM/yyyy HH:mm"
 
     //Permissions
     const val REQUEST_LOCATION_SETTINGS = 1000

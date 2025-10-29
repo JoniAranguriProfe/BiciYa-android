@@ -45,6 +45,7 @@ class RequestsFragment : Fragment(), RequestView {
     private lateinit var tvRange: TextView
     private lateinit var tvBikeCount: TextView
     private lateinit var frameNoData: FrameLayout
+    private lateinit var frameNoActiveRequest : FrameLayout
     private lateinit var frameNoInactiveData: FrameLayout
 
 
@@ -83,6 +84,7 @@ class RequestsFragment : Fragment(), RequestView {
         tvBikeCount = view.findViewById(R.id.tvBikeCount)
         frameNoData = view.findViewById(R.id.frameNoData)
         frameNoInactiveData = view.findViewById(R.id.frameNoInactiveData)
+        frameNoActiveRequest = view.findViewById(R.id.frameNoActiveRequest)
 
         initRecyclerAdapter()
     }
@@ -122,14 +124,19 @@ class RequestsFragment : Fragment(), RequestView {
         tvBikeCount.text = getString(R.string.bikes_requests, request.bikesRequested.toString())
     }
 
-    override fun setNoActiveRequestsVisibility(isVisible: Boolean) {
-        Log.e("setNoActiveRequestsVisibility", "frameNoData isvisible = $isVisible")
+    override fun setNoRequestsVisibility(isVisible: Boolean) {
+        Log.e("setNoRequestsVisibility", "frameNoData isvisible = $isVisible")
         frameNoData.isVisible = isVisible
+    }
+
+    override fun setNoActiveRequestsVisibility(isVisible: Boolean) {
+        Log.e("setNoActiveRequestsVisibility", "frameNoActiveRequest isvisible = $isVisible")
+        frameNoActiveRequest.isVisible = isVisible
     }
 
     override fun setInactivesRequestsVisibility(isVisible: Boolean) {
         Log.e(
-            "setNoActiveRequestsVisibility",
+            "setInactivesRequestsVisibility",
             "frameNoInactiveData isvisible = $isVisible"
         )
         frameNoInactiveData.isVisible = isVisible

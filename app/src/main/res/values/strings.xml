@@ -30,6 +30,10 @@
     <string name="no_expiration_date_message">Debe ingresar una fecha de expiración</string>
     <string name="no_notification_permission_message">No se pueden mostrar notificaciones sin permiso</string>
     <string name="no_requests_message">No tiene solicitudes realizadas</string>
+    <string name="nerby_station">Estación cercana</string>
+    <string name="nerby_station_message">La estación %1$s cumple con los requisitos solicitados e ingreso al radio de busqueda</string>
+    <string name="searching_nearby_stations">Buscando estaciones cercanas...</string>
+    <string name="expired_request">ha expirado el tiempo de busqueda</string>
 
 
 </resources>

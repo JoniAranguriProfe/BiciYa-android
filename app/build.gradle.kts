@@ -101,5 +101,9 @@ dependencies {
     // Coroutines testing
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.+")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
 }
