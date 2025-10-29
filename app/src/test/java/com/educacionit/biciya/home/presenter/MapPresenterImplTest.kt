@@ -1,10 +1,10 @@
 package com.educacionit.biciya.home.presenter
 
 import com.educacionit.biciya.home.contracts.map.MapView
-import com.educacionit.biciya.home.contracts.map.model.MapModel
-import com.educacionit.biciya.models.response.Station
-import com.educacionit.biciya.models.response.StationData
-import com.educacionit.biciya.models.response.StationInformationResponse
+import com.educacionit.biciya.home.contracts.map.MapModel
+import com.educacionit.biciya.data.network.models.response.Station
+import com.educacionit.biciya.data.network.models.response.StationData
+import com.educacionit.biciya.data.network.models.response.StationInformationResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher

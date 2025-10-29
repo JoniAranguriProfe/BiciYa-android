@@ -1,4 +1,4 @@
-package com.educacionit.biciya.data
+package com.educacionit.biciya.home.model
 
 import com.educacionit.biciya.data.database.RequestDao
 import com.educacionit.biciya.data.database.RequestEntity

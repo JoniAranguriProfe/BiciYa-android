@@ -1,10 +1,8 @@
 package com.educacionit.biciya.utils.popup
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -13,7 +11,7 @@ import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.educacionit.biciya.R
-import com.educacionit.biciya.home.contracts.request.presenter.RequestPresenter
+import com.educacionit.biciya.home.contracts.request.RequestPresenter
 import com.educacionit.biciya.utils.Constants
 import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.launch

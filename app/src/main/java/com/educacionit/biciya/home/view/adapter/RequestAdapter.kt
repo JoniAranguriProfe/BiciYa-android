@@ -1,4 +1,4 @@
-package com.educacionit.biciya.adapter
+package com.educacionit.biciya.home.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View

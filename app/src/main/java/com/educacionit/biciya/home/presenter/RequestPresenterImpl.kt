@@ -1,13 +1,14 @@
-package com.educacionit.biciya.home.contracts.request.presenter
+package com.educacionit.biciya.home.presenter
 
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.educacionit.biciya.R
-import com.educacionit.biciya.data.RequestRepository
 import com.educacionit.biciya.data.database.RequestEntity
 import com.educacionit.biciya.home.contracts.request.RequestView
+import com.educacionit.biciya.home.contracts.request.RequestPresenter
+import com.educacionit.biciya.home.model.RequestRepository
 import com.educacionit.biciya.utils.notification.NotificationHelper
 import com.educacionit.biciya.utils.service.StationCheckService
 import kotlinx.coroutines.CoroutineScope

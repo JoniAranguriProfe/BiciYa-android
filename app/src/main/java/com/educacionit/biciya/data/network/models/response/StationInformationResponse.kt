@@ -1,4 +1,4 @@
-package com.educacionit.biciya.models.response
+package com.educacionit.biciya.data.network.models.response
 
 import com.educacionit.biciya.data.database.StationEntity
 import com.google.gson.annotations.SerializedName
