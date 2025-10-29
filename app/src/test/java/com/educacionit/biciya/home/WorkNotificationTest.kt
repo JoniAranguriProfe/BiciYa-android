@@ -14,7 +14,6 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
-import org.mockito.kotlin.spy
 import retrofit2.Response
 
 
@@ -23,8 +22,6 @@ class WorkNotificationTest {
     private lateinit var mockedRepository: StationRepository
     private lateinit var mockedAPIService: EcoBiciService
     private lateinit var mockedDistanceCalculator: DistanceCalculator
-
-
     private lateinit var workNotification: WorkNotification
 
     @Before
@@ -32,10 +29,14 @@ class WorkNotificationTest {
         mockedRepository = mock(StationRepository::class.java)
         mockedAPIService = mock(EcoBiciService::class.java)
         mockedDistanceCalculator = mock(DistanceCalculator::class.java)
-        workNotification = WorkNotification(mock(), mock())
-        workNotification.stationRepository = mockedRepository
-        workNotification.ecoBiciService = mockedAPIService
-        workNotification.distanceCalculator = mockedDistanceCalculator
+        workNotification = WorkNotification(
+            stationRepository = mockedRepository,
+            ecoBiciService = mockedAPIService,
+            distanceCalculator = mockedDistanceCalculator,
+            appContext = mock(),
+            workerParams = mock()
+        )
+
     }
 
     @Test

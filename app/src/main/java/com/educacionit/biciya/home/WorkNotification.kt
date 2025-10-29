@@ -27,32 +27,39 @@ interface DistanceCalculator {
     fun calculateDistance(distanceOne: LatLng, distanceTwo: LatLng): Float
 }
 
-class WorkNotification(appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams) {
-
-    @VisibleForTesting
-    var distanceCalculator: DistanceCalculator = object : DistanceCalculator {
-        override fun calculateDistance(distanceOne: LatLng, distanceTwo: LatLng): Float {
-            val result = FloatArray(1)
-            Location.distanceBetween(
-                distanceOne.latitude,
-                distanceOne.longitude,
-                distanceTwo.latitude,
-                distanceTwo.longitude,
-                result
-            )
-            return result.first()
-        }
+object DistanceCalculatorImpl : DistanceCalculator {
+    override fun calculateDistance(distanceOne: LatLng, distanceTwo: LatLng): Float {
+        val result = FloatArray(1)
+        Location.distanceBetween(
+            distanceOne.latitude,
+            distanceOne.longitude,
+            distanceTwo.latitude,
+            distanceTwo.longitude,
+            result
+        )
+        return result.first()
     }
 
+}
+
+class WorkNotification(appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
+    private var distanceCalculator: DistanceCalculator = DistanceCalculatorImpl
+    private lateinit var stationRepository: StationRepository
+    private lateinit var ecoBiciService: EcoBiciService
+
     @VisibleForTesting
-    lateinit var stationRepository: StationRepository
+    internal var stations: List<StationEntity> = emptyList()
 
-    lateinit var ecoBiciService: EcoBiciService
-
-    @VisibleForTesting
-    var stations: List<StationEntity> = emptyList()
-
+    constructor(
+        stationRepository: StationRepository, ecoBiciService: EcoBiciService,
+        distanceCalculator: DistanceCalculator,
+        appContext: Context, workerParams: WorkerParameters
+    ) : this(appContext, workerParams) {
+        this.distanceCalculator = distanceCalculator
+        this.stationRepository = stationRepository
+        this.ecoBiciService = ecoBiciService
+    }
 
     override fun doWork(): Result {
         stationRepository = StationRepository(
