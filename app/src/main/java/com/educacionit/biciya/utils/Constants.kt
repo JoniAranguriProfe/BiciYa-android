@@ -1,5 +1,7 @@
 package com.educacionit.biciya.utils
 
+import java.util.UUID
+
 object Constants {
     const val STATE_INSTANCE = "STATE_INSTANCE"
 
@@ -19,4 +21,7 @@ object Constants {
     //Api
     const val BASE_URL = "https://apitransporte.buenosaires.gob.ar/ecobici/gbfs/"
 
+    fun generateKey():String{
+        return UUID.randomUUID().toString()
+    }
 }

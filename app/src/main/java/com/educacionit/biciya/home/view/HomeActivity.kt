@@ -26,6 +26,7 @@ import com.educacionit.biciya.home.contracts.home.HomeView
 import com.educacionit.biciya.home.model.LocationProvider
 import com.educacionit.biciya.home.presenter.HomePresenterImpl
 import com.educacionit.biciya.utils.Constants
+import com.educacionit.biciya.home.WorkNotification
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.ref.WeakReference
@@ -39,7 +40,6 @@ class HomeActivity : AppCompatActivity(), HomeView {
     private lateinit var homePresenter: HomePresenter
     private lateinit var frameProgress: FrameLayout
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,17 +49,26 @@ class HomeActivity : AppCompatActivity(), HomeView {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         initPresenter()
         setUpViews()
 
         initFragments()
-
         setFragmentOrMapViewAsDefault(
             savedInstanceState?.getInt(
                 Constants.STATE_INSTANCE,
                 R.id.map_item
             ) ?: R.id.map_item
         )
+        scheduleNotification()
+
+    }
+
+    private fun scheduleNotification() {
+
+        val tag = Constants.generateKey()
+        WorkNotification.saveNotification( tag , 15,applicationContext )
+
     }
 
     override fun onStart() {
